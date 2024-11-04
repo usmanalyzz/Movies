@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Page</title>
+      {% load custom_filters %}
+      {% load static %}
+      <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/details.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/details.css' %}">
+
+  </head>
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <div class="logo-para">
+          <div class="logo-img">
+            <a href="{% url 'index' %}">
+              <img class="logo" src="/media/images/logo.png" alt="Logo" />
+            </a>
+          </div>
+          <div class="para">
+            <span><p>HD movies at the smallest file size.</p></span>
+          </div>
+        </div>
+
+        <div class="search-li">
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              class="input"
+              type="text"
+              name=""
+              id=""
+              placeholder="Quick Search"
+            />
+          </div>
+
+          <div class="items">
+            <ul>
+              <li>
+                <a href="{% url 'index' %}">Home</a>
+              </li>
+              <li>
+                <a href="" style="color: #75c74e">4K</a>
+              </li>
+              <li>
+                <a href="">Trending</a>
+              </li>
+              <li>
+                <a href="">Browse Movies</a>
+              </li>
+
+              <div class="login">
+                <ul>
+                  {% if user.is_authenticated %}
+                      <li><a href="{% url 'logout' %}">Logout</a></li>
+                  {% else %}
+                      <li><a href="{% url 'login' %}">Login</a></li>
+                  {% endif %}
+                  <li>
+                    <span style="color: rgb(148 148 148); text-decoration: none"
+                      >|</span
+                    >
+                  </li>
+
+                  <li>
+                      <a href="#" id="registerBtn">Register</a>
+                  </li>
+                </ul>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="container">
+      <div class="main-movies">
+        <div class="movie-details">
+          <!-- Movie Poster -->
+          <div class="poster">
+            <img src="{{ movie.banner_image_url }}" alt="The Apprentice Poster" />
+
+            <!-- Buttons -->
+            <div class="info">
+              <h1>{{ movie.name }}</h1>
+              <p class="year-genre">{{ movie.year }}</p>
+              <p class="genre">{{ movie.movie_category }}</p>
+              <p class="availability">
+                Available in:
+                <button>720p.WEB</button>
+                <button>1080p.WEB</button>
+                <button>
+                  1080p.WEB <span style="color: #75c74e">x265</span>
+                </button>
+              </p>
+
+              <!-- Ratings -->
+              <div class="ratings">
+                <div class="rating">❤️ {{ total_likes }}</div>
+                <div class="rating">
+                  ⭐ {{ movie.rating }} <span class="subtext"></span>
+                </div>
+              </div>
+              {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'like_movie' movie.id %}">
+                    {% csrf_token %}
+                    {% if has_liked %}
+                        <button type="submit" disabled style="background: #000000;">❤️</button>
+                    {% else %}
+                        <button type="submit" style="background: #000000;">❤️</button>
+                    {% endif %}
+                </form>
+              {% else %}
+                  <p>Please log in to like this movie.</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Movie Info -->
+
+          <div class="buttons">
+            <button class="download">Download</button>
+            <button class="watch-now">Watch Now</button>
+          </div>
+
+          <!-- Tags -->
+          <div class="tags">
+            <span>rape</span>
+            <span>corruption</span>
+            <span>politics</span>
+            <span>blackmail</span>
+            <span>1970s</span>
+            <span>biography</span>
+          </div>
+
+          <!-- VPN Warning -->
+          <div class="vpn-warning">
+            <p style="text-align: start; color: white">
+              Please enable your VPN when downloading torrents.
+            </p>
+            <p>
+              If you torrent without a VPN, your ISP can see that you're
+              torrenting and may throttle your connection and get fined by legal
+              action!
+            </p>
+            <button class="vpn-button">Get Surf VPN</button>
+          </div>
+        </div>
+
+        <!-- Similar Movies -->
+        <div class="similar-movies">
+          <h2>Similar Movies</h2>
+          <div class="movie-list">
+              {% if similar_movies %}
+                  {% for similar_movie in similar_movies %}
+                      <div class="similar-movie">
+                          <a href="{% url 'detail' similar_movie.id %}">
+                              <img src="{{ similar_movie.banner_image_url }}" alt="{{ similar_movie.name }}" />
+                          </a>
+                      </div>
+                  {% endfor %}
+              {% else %}
+                  <p>No similar movies available.</p>
+              {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="video-images-row">
+        <div class="video-container">
+          {% if videos %}
+              {% for video in videos %}
+                  <div class="video-container">
+                      <iframe
+                          width="560"
+                          height="315"
+                          src="{{ video.video_url|youtube_embed }}"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen>
+                      </iframe>
+                  </div>
+              {% endfor %}
+          {% else %}
+              <p>No videos available for this movie.</p>
+          {% endif %}
+        </div>
+        <div class="image-container">
+          {% if screenshots %}
+            {% for screenshot in screenshots %}
+                <div class="screenshot">
+                    <img src="{{ screenshot.image }}" alt="Screenshot for {{ movie.name }}" />
+                </div>
+            {% endfor %}
+          {% else %}
+              <p>No screenshots available for this movie.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <section class="summary">
+        <div class="summary-text">
+          <div class="summary-text-h">
+            <h2>Plot Summary</h2>
+            {% if movie_info %}
+            <p style="color: gray">
+              {{ movie_info.summary }}
+            </p>
+            {% endif %}
+          </div>
+          <p style="color: gray">
+            <em>Uploaded by: FREEMAN</em><br />November 01, 2024 at 02:53 PM
+          </p>
+        </div>
+
+
+        <aside class="movie-info">
+          {% if movie_info %}
+          <div class="director">
+            <div class="director-d">
+              <h3>Director</h3>
+              <p>{{ movie_info.director_name }}</p>
+            </div>
+            <div class="top-cast">
+              <h3>Top Cast</h3>
+              <ul>
+                {% for name in top_cast_names %}
+                  <li>{{ name|trim }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          {% endif %}
+        </aside>
+      </section>
+
+
+      <div class="main-tech">
+        {% for tech in tech_specs %}
+        <div class="tech-heading">
+          <h3>Tech specs</h3>
+          <div class="tech">
+            <div class="quality-options">
+              <span class="quality">720p.WEB</span>
+              <span class="quality">1080p.WEB</span>
+              <span class="quality"
+                >1080p.WEB.<span class="x265">x265</span></span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-specs">
+          <div class="spec-details">
+            <div class="first-2 all-2">
+              <div class="spec-item"><i class="icon-folder"></i> {{ tech.space }}</div>
+              <div class="spec-item">
+                <i class="icon-resolution"></i> 1280x854
+              </div>
+            </div>
+
+            <div class="second-2 all-2">
+              <div class="spec-item">
+                <i class="icon-audio"></i> {{ tech.language }}
+              </div>
+              <div class="spec-item"><i class="icon-rating"></i> NR</div>
+            </div>
+
+            <div class="third-2 all-2">
+              <div class="spec-item">
+                <i class="icon-flags"></i> <img src="us-flag.png" alt="US" />
+                <img src="fr-flag.png" alt="FR" />
+              </div>
+              <div class="spec-item"><i class="icon-fps"></i> 23.976 fps</div>
+            </div>
+            <div class="fourth-2 all-2">
+              <div class="spec-item"><i class="icon-time"></i> {{ tech.duration_hours }}hr {{ tech.duration_minutes }}min</div>
+              <div class="spec-item">
+                <i class="icon-seeds"></i> Seeds
+                <span class="seeds-count">100+</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+
+      <div class="comments-section">
+        <div class="comment-review">
+          <h3><i class="icon-comments"></i> {{ movie.comments.count }} Comments</h3>
+          {% for comment in movie.comments.all %}
+              <div class="comment">
+                  <p class="comment-header">
+                      <strong>{{ comment.user_name }}</strong> <em>{{ comment.created_at }}</em>
+                      <span class="likes">{{ comment.likes.count }} ❤️</span>
+                      {% if user.is_authenticated %}
+                          <form method="POST" action="{% url 'like_comment' comment.id %}" style="display:inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="like-button">❤️</button>
+                          </form>
+                      {% endif %}
+                  </p>
+                  <p>{{ comment.comment_text }}</p>
+              </div>
+          {% endfor %}
+
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'comment_movie' movie.id %}">
+                {% csrf_token %}
+                <textarea name="comment_text" placeholder="Leave a comment..." required></textarea>
+                <input type="hidden" name="user_name" value="{{ user.username }}">
+                <button type="submit" class="login-button">Leave a comment</button>
+            </form>
+            {% else %}
+                <button class="login-button"><a href="{% url 'login' %}" style="color: white; text-decoration: none;"> Login to leave a comment </a> </button>
+            {% endif %}
+          </div>
+
+        <div class="reviews-section">
+          <h3><i class="icon-reviews"></i> Movie Reviews</h3>
+          <p>No reviews yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="myfooter">
+      <div class="footer">
+        <div class="footer-links">
+          <span class="head">YTS &copy; 2011 - 2024 </span> -
+          <a href="">Blog</a> - <a href="">DMCA</a> - <a href="">API</a> -
+          <a href="">RSS</a> - <a href="">Contact</a> -
+          <a href="">Browse Movies</a> - <a href="">Requests</a> -
+          <a href="">Login</a> -
+          <a href="">Language</a>
+        </div>
+        <div class="footer-links" style="margin-top: 10px">
+          <a href="">EZTV</a> - <a href="">YIFY Status</a> -
+          <a href="">YTS Proxies</a> - <a href="">YTS Proxies (TOR)</a> -
+          <a href="">Follow @ytsyify</a>
+        </div>
+        <div class="agreement">
+          <p>
+            By using this site you agree to and accept our
+            <span style="color: rgb(172, 172, 172)">User Agreement</span>, which
+            can be read <span style="color: rgb(172, 172, 172)">here</span>.
+          </p>
+        </div>
+      </div>
+    </footer>
+  <div id="registerModal" class="modal">
+          <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Register</h2>
+              <form id="registrationForm">
+                  <label for="username">Username:</label><br />
+                  <input class="search-r" type="text" id="username" name="username" required /><br />
+                  <label for="email">Email:</label><br />
+                  <input class="search-r" type="email" id="email" name="email" required /><br />
+                  <label for="password">Password:</label><br />
+                  <input class="search-r" type="password" id="password" name="password" required /><br />
+                  <input class="btn1" type="submit" value="Register" />
+              </form>
+          </div>
+      </div>
+
+    <script>
+        // Get modal element
+        var modal = document.getElementById("registerModal");
+        // Get open modal button
+        var btn = document.getElementById("registerBtn");
+        // Get close button
+        var span = document.getElementsByClassName("close")[0];
+
+        // Listen for open click
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Listen for close click
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Listen for outside click
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Prevent form submission for demonstration
+        document.getElementById("registrationForm").onsubmit = function(event) {
+            event.preventDefault();
+            alert("Registration successful!"); // Replace with actual registration logic
+            modal.style.display = "none"; // Close the modal after submission
+        }
+    </script>
+  </body>
+</html>
