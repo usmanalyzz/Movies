@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+    <title>YTS Movies</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <div class="logo-para">
+          <div class="logo-img">
+            <a href="{% url 'index' %}">
+              <img class="logo" src="/media/images/logo.png" alt="Logo" />
+            </a>
+          </div>
+          <div class="para">
+            <span><p>HD movies at the smallest file size.</p></span>
+          </div>
+        </div>
+
+        <div class="search-li">
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              class="input"
+              type="text"
+              name=""
+              id=""
+              placeholder="Quick Search"
+            />
+          </div>
+
+          <div class="items">
+            <ul>
+              <li>
+                <a href="{% url 'index' %}">Home</a>
+              </li>
+              <li>
+                <a href="" style="color: #75c74e">4K</a>
+              </li>
+              <li>
+                <a href="">Trending</a>
+              </li>
+              <li>
+                <a href="">Browse Movies</a>
+              </li>
+
+              <div class="login">
+                <ul>
+                  {% if user.is_authenticated %}
+                      <li><a href="{% url 'logout' %}">Logout</a></li>
+                  {% else %}
+                      <li><a href="{% url 'login' %}">Login</a></li>
+                  {% endif %}
+                  <li>
+                    <span style="color: rgb(148 148 148); text-decoration: none"
+                      >|</span
+                    >
+                  </li>
+
+                  <li>
+                      <a href="#" id="registerBtn">Register</a>
+                  </li>
+                </ul>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="main-bg">
+      <div class="main-section-l">
+        <div class="login-container">
+          <h2>Login</h2>
+          {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          <form method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              <label style="display: flex;" for="username">Email:</label><br />
+              <input class="search-l" type="email" name="email" placeholder="Email" required>
+              <label style="display: flex;" for="username">Password:</label><br />
+              <input class="search-l" type="password" name="password" placeholder="Password" required>
+              <button class="btn" type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <footer class="myfooter">
+      <div class="footer">
+        <div class="footer-links">
+          <span class="head">YTS &copy; 2011 - 2024 </span> -
+          <a href="">Blog</a> - <a href="">DMCA</a> - <a href="">API</a> -
+          <a href="">RSS</a> - <a href="">Contact</a> -
+          <a href="">Browse Movies</a> - <a href="">Requests</a> -
+          <a href="">Login</a> -
+          <a href="">Language</a>
+        </div>
+        <div class="footer-links" style="margin-top: 10px">
+          <a href="">EZTV</a> - <a href="">YIFY Status</a> -
+          <a href="">YTS Proxies</a> - <a href="">YTS Proxies (TOR)</a> -
+          <a href="">Follow @ytsyify</a>
+        </div>
+        <div class="agreement">
+          <p>
+            By using this site you agree to and accept our
+            <span style="color: rgb(172, 172, 172)">User Agreement</span>, which
+            can be read <span style="color: rgb(172, 172, 172)">here</span>.
+          </p>
+        </div>
+      </div>
+    </footer>
+  <div id="registerModal" class="modal">
+          <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Register</h2>
+              <form id="registrationForm" action="{% url 'register' %}">
+                  {% csrf_token %}
+                  <label for="username">Username:</label><br />
+                  <input class="search-r" type="text" id="username" name="username" required /><br />
+                  <label for="email">Email:</label><br />
+                  <input class="search-r" type="email" id="email" name="email" required /><br />
+                  <label for="password">Password:</label><br />
+                  <input class="search-r" type="password" id="password" name="password" required /><br />
+                  <input class="btn1" type="submit" value="Register" />
+              </form>
+          </div>
+      </div>
+
+    <script>
+        // Get modal element
+        var modal = document.getElementById("registerModal");
+        // Get open modal button
+        var btn = document.getElementById("registerBtn");
+        // Get close button
+        var span = document.getElementsByClassName("close")[0];
+
+        // Listen for open click
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Listen for close click
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Listen for outside click
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+  </body>
+</html>
