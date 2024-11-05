@@ -1,2 +1,2 @@
 debug.log
-debug.log __pycache__/ .pyc env/
+debug.log __pycache__/ .pyc env/ *.pyc
