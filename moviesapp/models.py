@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 class Time(models.Model):
@@ -9,6 +11,9 @@ class Time(models.Model):
     class Meta:
         abstract = True
 
+
+class CustomUser(AbstractUser):
+    usman = models.CharField(max_length=2000, null=True)
 
 class Movie(Time):
     name = models.CharField(max_length=255)
@@ -51,7 +56,7 @@ class Comment(Time):
 
 class CommentLike(Time):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('user', 'comment')
@@ -73,7 +78,7 @@ class TechSpec(Time):
 
 class Like(Time):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='likes')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.user} liked {self.movie.name}"
