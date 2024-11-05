@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'theme',
     'moviesapp'
 ]
@@ -37,6 +38,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTH_USER_MODEL = 'moviesapp.CustomUser'
 
 ROOT_URLCONF = 'movies.urls'
 
@@ -64,7 +67,7 @@ WSGI_APPLICATION = 'movies.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Movies',
+        'NAME': 'MoviesTest',
         'USER': 'postgres',
         'PASSWORD': '3495',
         'HOST': 'localhost',
